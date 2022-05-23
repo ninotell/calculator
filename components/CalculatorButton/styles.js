@@ -1,10 +1,11 @@
 import { StyleSheet } from 'react-native'
 
 const styles = StyleSheet.create({
-    numberContainer: {
+    calculatorButtonContainer: {
         height: 80,
+        width: 80,
         backgroundColor: "white",
-        borderRadius: 18,
+        borderRadius: 50,
         justifyContent: 'center',
         alignItems: 'center',
         margin: 10,
@@ -12,9 +13,12 @@ const styles = StyleSheet.create({
         shadowOffset: { width: -2, height: 4 },
         shadowOpacity: 0.2,
         shadowRadius: 3,
+        textAlign: 'center',
+        textAlignVertical: 'center',
     },
-    number: {
-        fontSize: 30
+    content: {
+        fontSize: 30,
+        fontWeight: "500"
     },
 
 })
