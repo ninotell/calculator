@@ -1,17 +1,46 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from "react"
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity, Alert } from 'react-native';
 import styles from './Styles';
 import CalculatorButton from './components/CalculatorButton';
 
 
 export default function App() {
   const [input, setInput] = useState("")
-  const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+  const numbers = [7, 8, 9, 4, 5, 6, 1, 2, 3, 0]
   const symbols = ["/", "*", "+", "-", "="]
 
+  const countString = (str, letter) => {
+    let count = 0;
+
+    // looping through the items
+    for (let i = 0; i < str.length; i++) {
+
+      // check if the character is at that position
+      if (str.charAt(i) == letter) {
+        count += 1;
+      }
+    }
+    return count;
+  }
 
   const handleButtonPress = (button) => {
+
+    if (button === "()") {
+      if (input.length === 0
+        || input[input.length - 1] === "("
+        || symbols.includes(input[input.length - 1])) {
+        setInput(prev => prev + "(")
+        return
+      } else {
+        if (countString(input, "(") > countString(input, ")")) {
+          setInput(prev => prev + ")")
+          return
+        } else {
+          return
+        }
+      }
+    }
 
     if (button === ".") {
       let currentNumbers = []
@@ -31,8 +60,21 @@ export default function App() {
 
 
     if (button === "=") {
-      setInput((eval(input)).toString())
-      return
+      try {
+        setInput((eval(input
+          .replace("%",
+            input[input.length - 1] === "%"
+              ? "/100"
+              : "/100*"
+          )
+        )).toString())
+        return
+      }
+      catch (error) {
+        Alert.alert("Error", "Invalid format", ["Ok"])
+        setInput("")
+        return
+      }
     }
     setInput(prev => prev + button)
     return
@@ -40,7 +82,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-
+      <StatusBar style='light' />
       <Text style={[
         styles.input,
         input.length <= 7
@@ -51,6 +93,21 @@ export default function App() {
       ]}>{input}</Text>
       <View style={styles.bodyContainer}>
         <View style={styles.numbersContainer}>
+          <TouchableOpacity
+            onPress={() => setInput("")}
+          >
+            <CalculatorButton content={"AC"} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => handleButtonPress("()")}
+          >
+            <CalculatorButton content={"()"} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => (input.length === 0 || input.includes("%")) ? {} : handleButtonPress("%")}
+          >
+            <CalculatorButton content={"%"} />
+          </TouchableOpacity>
           {numbers.map(n => (
             <TouchableOpacity
               key={n}
@@ -66,21 +123,13 @@ export default function App() {
               }
               handleButtonPress(".")
             }}
-            style={styles.dotButton}
           >
             <CalculatorButton content={"."} />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setInput(prev => prev.slice(0, -1))}
-            style={styles.deleteButton}
           >
             <CalculatorButton content={"DELETE"} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setInput("")}
-            style={styles.dotButton}
-          >
-            <CalculatorButton content={"CE"} />
           </TouchableOpacity>
         </View>
         <View style={styles.symbolsContainers}>
@@ -89,7 +138,7 @@ export default function App() {
               key={s}
               onPress={() => {
                 if (input === ""
-                  || ["+", "-", "/", "."].includes(input[input.length - 1])
+                  || ["+", "-", "*", "/", ".", "("].includes(input[input.length - 1])
                   || input[input.length - 1] === s) {
                   return
                 } else {

@@ -11,12 +11,11 @@ export default function CalculatorButton({ content }) {
       [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].includes(content)
         ? { backgroundColor: "#f09a36" }
         : { backgroundColor: "#a6a6a6" },
-      content === "CE"
+      content === "AC"
         ? {
-          width: 250,
           backgroundColor: "#ff837c"
         }
-        : { width: 80 }
+        : {}
     ]}>
       {
         content === "DELETE"
